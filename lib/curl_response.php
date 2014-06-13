@@ -58,6 +58,12 @@ class CurlResponse {
             preg_match('#(.*?)\:\s(.*)#', $header, $matches);
             $this->headers[$matches[1]] = $matches[2];
         }
+		
+        # response can have more than one header (in case of redirects) so remove other headers
+        while( preg_match_all($pattern, $this->body, $matches) > 0) {
+            $headers_string = array_pop($matches[0]);
+            $this->body = str_replace($headers_string, '', $this->body);
+        }
     }
     
     /**
